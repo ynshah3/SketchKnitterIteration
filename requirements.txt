@@ -10,4 +10,4 @@ torchvision
 scipy
 requests
 tqdm
-tensorflow-gpu>=2.0
+tensorflow
