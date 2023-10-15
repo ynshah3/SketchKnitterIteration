@@ -23,6 +23,8 @@ def load_data(
         category,
         class_cond=False,
         deterministic=False,
+        random_crop=False,
+        random_flip=False,
         Nmax=96,
 ):
     """
@@ -34,12 +36,14 @@ def load_data(
     :param data_dir: a dataset directory.
     :param batch_size: the batch size of each returned pair.
     :param image_size: the size to which images are resized.
+    :param category: list of category names to be trained on from the dataset
     :param class_cond: if True, include a "y" key in returned dicts for class
                        label. If classes are not available and this is true, an
                        exception will be raised.
     :param deterministic: if True, yield results in a deterministic order.
     :param random_crop: if True, randomly crop the images for augmentation.
     :param random_flip: if True, randomly flip the images for augmentation.
+    :param Nmax: max size of a sketch.
     """
     if not data_dir:
         raise ValueError("unspecified data directory")
@@ -101,16 +105,15 @@ class SketchDataset(Dataset):
 
         data_sketches = np.concatenate(tmp_sketches)
         data_sketches_label = np.concatenate(tmp_label)
-        data_sketches, data_sketches_label = self.purify(data_sketches,
-                                                         data_sketches_label)  # data clean.  # remove toolong and too stort sketches.
+        data_sketches, data_sketches_label = self.purify(data_sketches, data_sketches_label)
         self.sketches = data_sketches.copy()
         self.sketches_label = data_sketches_label.copy()
         self.sketches_normed = self.normalize(data_sketches)
 
-        print(f"length of trainset(normed): {len(self.sketches_normed)}")
+        print(f"length of train set(normed): {len(self.sketches_normed)}")
         self.len_dataset = len(self.sketches_normed)
 
-        # self.Nmax = self.max_size(data_sketches)  # max size of a sk  etch.
+        # self.Nmax = self.max_size(data_sketches)
 
     def __len__(self):
         return self.len_dataset
@@ -131,6 +134,9 @@ class SketchDataset(Dataset):
         return max(sizes)
 
     def purify(self, sketches, labels):
+        """
+        remove sketches that are too long or too short
+        """
         data = []
         new_labels = []
         for i, sketch in enumerate(sketches):

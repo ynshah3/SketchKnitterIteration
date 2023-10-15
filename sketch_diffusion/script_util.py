@@ -7,7 +7,7 @@ from . import gaussian_diffusion_acc as gda
 from .respace import SpacedDiffusion, space_timesteps
 from .respace import SpacedDiffusion_noise
 from .respace import SpacedDiffusion_acc
-from .unet import SuperResModel, UNetModel, AttentionBlock
+from .unet import SuperResModel, UNetModel, AttentionBlock, EncoderUNetModel
 
 NUM_CLASSES = 1000
 
@@ -187,7 +187,7 @@ def create_model_and_diffusion_acc(
     )
     return model, diffusion
 
-# create Unet 
+# create Unet
 def create_model(
     image_size,
     num_channels,
@@ -305,7 +305,7 @@ def sr_create_model(
     use_scale_shift_norm,
     dropout,
 ):
-    _ = small_size  
+    _ = small_size
 
     if large_size == 256:
         channel_mult = (1, 1, 2, 2, 4, 4)

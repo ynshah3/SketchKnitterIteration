@@ -1,12 +1,13 @@
 import argparse
 import os
+import torch
 
 from sketch_diffusion import dist_util, logger
 from sketch_diffusion.image_datasets import load_data
 from sketch_diffusion.resample import create_named_schedule_sampler
 from sketch_diffusion.script_util import (
     model_and_diffusion_defaults,
-    create_model_and_diffusion, # you can change mode here
+    create_model_and_diffusion,  # you can change mode here
     args_to_dict,
     add_dict_to_argparser,
 )
@@ -22,11 +23,10 @@ def main():
     if not os.path.exists(args.data_dir):
         raise FileNotFoundError("The dataset path {args.data_dir} is not found!")
 
-    dist_util.setup_dist()
     logger.configure(args.log_dir)
 
     logger.log("creating model and diffusion...")
-    model, diffusion = create_model_and_diffusion( # you can change mode here
+    model, diffusion = create_model_and_diffusion(  # you can change mode here
         **args_to_dict(args, model_and_diffusion_defaults().keys())
     )
 
@@ -38,7 +38,7 @@ def main():
         data_dir=args.data_dir,
         batch_size=args.batch_size,
         image_size=args.image_size,
-        category=["moon.npz"], # replace your own datasets name.
+        category=["shoe.npz", ],  # all category names to be trained on
         class_cond=False,
     )
 
